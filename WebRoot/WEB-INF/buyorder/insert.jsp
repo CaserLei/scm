@@ -14,7 +14,9 @@
 
 <script type="text/javascript">
 	$(function(){
-	
+			//变量用来支持单元格编辑时使用
+		    var editIndex = undefined;
+
 			$('#dg').datagrid({    
 			    //url:'${proPath}/supplier/selectPage.action', //通过关键字查询
 			    //支持多条件查询
@@ -127,7 +129,52 @@
 				width : 100,
 				align:'right'
 			} 
-			] ]
+			] ],
+			
+			onDblClickCell: function(index,field,value){
+				//alert("dblclick");
+				//结束编辑行, 可以不用，不会被调用，将在单击事件处理
+					if(editIndex != undefined){							
+						//alert(" onDblClickCell editIndex != undefined");			
+					  $(this).datagrid('endEdit', editIndex);
+						editIndex = undefined;
+					}
+					//alert("dbclick");		
+					//设置可编辑行	
+					$(this).datagrid('beginEdit', index);
+					editIndex = index;
+					alert(editIndex);
+					//alert("dbclick");	
+					var ed = $(this).datagrid('getEditor', {index:index,field:field});
+					/* var ed = $('#dg').datagrid('getEditor', {index:index,field:'birthday'});
+					$(ed.target).datebox('setValue', '5/4/2012');
+                     */
+					alert("field||index:"+field+":"+index);	
+                    alert(ed);
+					console.log(ed);
+					$(ed.target).focus();
+				
+			},
+			onClickCell: function(index,field,value){
+				if(editIndex!= undefined){					
+					
+				  //计算总价
+				  var amount = $(this).datagrid('getEditor', {index:editIndex,field:"bodAmount"});
+				  var buyPrice=$(this).datagrid('getEditor', {index:editIndex,field:"bodBuyPrice"});
+				  var bodTotalPrice =$(buyPrice.target).numberbox('getValue')*$(amount.target).numberbox('getValue');
+				  //alert("bodTotalPrice"+bodTotalPrice);
+				  var ed = $(this).datagrid('getEditor', {index:editIndex,field:"bodTotalPrice"});
+				  //alert(" onClickCell editIndex != undefined3");	
+				  $(ed.target).numberbox('setValue', bodTotalPrice);
+				  //alert(" onClickCell editIndex != undefined4");	
+				  
+				  //结束编辑行
+				  $(this).datagrid('endEdit', editIndex);
+					editIndex = undefined;
+				}				
+			}
+
+			    
 		});
 		
 			
@@ -150,26 +197,35 @@
 </head>
 
 <body>
-    <form style="padding:15px;margin:0px;background:#eee;" id="ff" action="">
-	        请填写采购信息：<br>
-	 	供应商：<input type="hidden" id="supId" name="supId"/>
-	 	<input type="text" id="supName" name="supName"/>
-	 	仓库：<select id="cc" class="easyui-combobox" name="shId" style="width:200px;">   
-					<c:forEach items="${applicationScope.sysParam.shId}" var="shId">
-					    <option value="${shId.key}">${shId.value}</option>   
-					</c:forEach>   
-				</select>
-	 	日期：<input  type="text" id="boDate"
-					class="easyui-datebox" name="boDate" required="required"></input>
-	 
-	        应付：<input type="text" id="boPayable" name="boPayable"/><br>
-	        已付：<input type="text" id="boPaid" name="boPaid"/>
-	 	欠款：<input type="text" id="boArrears" name="boArrears"/>
-	 	原始单号：<input type="text" id="boOriginal" name="boOriginal"/><br>
-	 	经手人：<input type="text" id="boAttn" name="boAttn"/>
-	 	操作员：<input type="text" id="boOperator" name="boOperator"/>
-	 	备注：<input type="text" id="boRemark" name="boRemark"/>
-   </form>
+    <form class="myfm" style="padding:15px;margin:0px;background:#eee;"
+		id="ff" action="">
+		<div class="myftitle">请填写采购信息</div>
+		<div class="myfitem2">
+			<label>供应商：</label><input type="hidden" id="supId" name="supId" /> <input
+				type="text" id="supName" name="supName" /> 
+				<label>仓库：</label><select id="cc"
+				class="easyui-combobox" name="shId" style="width:200px;">
+				<c:forEach items="${applicationScope.sysParam.shId}" var="shId">
+					<option value="${shId.key}">${shId.value}</option>
+				</c:forEach>
+			</select> 
+			<label>日期：</label><input type="text" id="boDate" class="easyui-datebox"
+				name="boDate" required="required"></input>
+		</div>
+		<div class="myfitem2">
+			<label>应付：</label><input type="text" id="boPayable" name="boPayable" />
+			<label>已付：</label><input type="text" id="boPaid" name="boPaid" /> 
+			<label>欠款：</label><input type="text" id="boArrears" name="boArrears" />
+		</div>
+		<div class="myfitem2">	
+			<label> 原始单号：</label><input type="text" id="boOriginal" name="boOriginal" />
+			<label>经手人：</label><input type="text" 	id="boAttn" name="boAttn" /> 
+			<label>操作员：</label><input type="text" id="boOperator" 	name="boOperator" /> 
+		</div>
+		<div class="myfitem2">
+			<label>备注：</label><input type="text" id="boRemark" name="boRemark" />
+		</div>
+	</form>
     
     
 	<table id="dg"></table>
