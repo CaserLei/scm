@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="leifeng.scm.dao.AccountMapper" >
+  <resultMap id="AccountResultMap" type="Account" >
+    <id column="acc_id" property="accId" jdbcType="INTEGER" />
+    <result column="acc_login" property="accLogin" jdbcType="VARCHAR" />
+    <result column="acc_name" property="accName" jdbcType="VARCHAR" />
+    <result column="acc_pass" property="accPass" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    acc_id, acc_login, acc_name, acc_pass
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="AccountResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from account
+    where acc_id = #{accId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 用户登录 -->
+  <select id="login" resultMap="AccountResultMap" parameterType="Account" >
+    select 
+    <include refid="Base_Column_List" />
+    from account
+    where acc_login = #{accLogin} and acc_pass=#{accPass}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from account
+    where acc_id = #{accId,jdbcType=INTEGER}
+  </delete>
+ 
+  <insert id="insert" parameterType="leifeng.scm.entity.Account" >
+    insert into account (acc_id, acc_login, acc_name, 
+      acc_pass)
+    values (#{accId,jdbcType=INTEGER}, #{accLogin,jdbcType=VARCHAR}, #{accName,jdbcType=VARCHAR}, 
+      #{accPass,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="leifeng.scm.entity.Account" >
+    insert into account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="accId != null" >
+        acc_id,
+      </if>
+      <if test="accLogin != null" >
+        acc_login,
+      </if>
+      <if test="accName != null" >
+        acc_name,
+      </if>
+      <if test="accPass != null" >
+        acc_pass,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="accId != null" >
+        #{accId,jdbcType=INTEGER},
+      </if>
+      <if test="accLogin != null" >
+        #{accLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="accName != null" >
+        #{accName,jdbcType=VARCHAR},
+      </if>
+      <if test="accPass != null" >
+        #{accPass,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="leifeng.scm.entity.Account" >
+    update account
+    <set >
+      <if test="accLogin != null" >
+        acc_login = #{accLogin,jdbcType=VARCHAR},
+      </if>
+      <if test="accName != null" >
+        acc_name = #{accName,jdbcType=VARCHAR},
+      </if>
+      <if test="accPass != null" >
+        acc_pass = #{accPass,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where acc_id = #{accId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="leifeng.scm.entity.Account" >
+    update account
+    set acc_login = #{accLogin,jdbcType=VARCHAR},
+      acc_name = #{accName,jdbcType=VARCHAR},
+      acc_pass = #{accPass,jdbcType=VARCHAR}
+    where acc_id = #{accId,jdbcType=INTEGER}
+  </update>
+</mapper>

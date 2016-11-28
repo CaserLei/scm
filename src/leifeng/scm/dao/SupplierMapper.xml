@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="leifeng.scm.dao.SupplierMapper" >
+  <resultMap id="SupplierResultMap" type="Supplier" >
+    <id column="sup_id" property="supId" jdbcType="INTEGER" />
+    <result column="sup_name" property="supName" jdbcType="VARCHAR" />
+    <result column="sup_linkman" property="supLinkman" jdbcType="VARCHAR" />
+    <result column="sup_phone" property="supPhone" jdbcType="VARCHAR" />
+    <result column="sup_address" property="supAddress" jdbcType="VARCHAR" />
+    <result column="sup_remark" property="supRemark" jdbcType="VARCHAR" />
+    <result column="sup_pay" property="supPay" />
+    <result column="sup_type" property="supType" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    sup_id, sup_name, sup_linkman, sup_phone, sup_address, sup_remark,sup_pay,sup_type
+  </sql>
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="SupplierResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from supplier
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from supplier
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </delete>
+  
+     <!-- 通过关键字分页查询, 返回数据集 -->
+  <select id="selectPageList" parameterType="page" resultMap="SupplierResultMap" >
+    select * from supplier where sup_name like #{keyWord} limit #{start},#{rows}
+  </select>
+     <!-- 通过关键字分页查询，返回总记录数 -->
+  <select id="selectPageCount" parameterType="page" resultType="Integer">
+  	select count(1) from supplier where sup_name like #{keyWord} 
+  </select>
+  
+  <!-- 通过多条件分页查询，返回数据集 -->
+  <select id="selectPageListUseDyc" parameterType="page" resultMap="SupplierResultMap" >
+    select * from supplier 
+    <where>
+    	<if test="paramEntity.supName!=null">and sup_name like #{paramEntity.supName}</if>
+    	<if test="paramEntity.supAddress!=null">and sup_address like #{paramEntity.supAddress}</if>    
+    </where>
+	 limit #{start},#{rows}
+  </select>
+  
+  <!-- 通过多条件分页查询，返回总记录数 -->
+  <select id="selectPageCountUseDyc" parameterType="page" resultType="Integer">
+  	select count(1) from supplier 
+  	<where>
+    	<if test="paramEntity.supName!=null">and sup_name like #{paramEntity.supName}</if>
+    	<if test="paramEntity.supAddress!=null">and sup_address like #{paramEntity.supAddress}</if>    
+    </where>
+  </select>
+  
+ 
+  <insert id="insert" parameterType="Supplier" >
+    insert into supplier (sup_id, sup_name, sup_linkman, 
+      sup_phone, sup_address, sup_remark,sup_pay,sup_type
+      )
+    values (#{supId,jdbcType=INTEGER}, #{supName,jdbcType=VARCHAR}, #{supLinkman,jdbcType=VARCHAR}, 
+      #{supPhone,jdbcType=VARCHAR}, #{supAddress,jdbcType=VARCHAR}, #{supRemark,jdbcType=VARCHAR},#{supPay},#{supType}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="Supplier" >
+    insert into supplier
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="supId != null" >
+        sup_id,
+      </if>
+      <if test="supName != null" >
+        sup_name,
+      </if>
+      <if test="supLinkman != null" >
+        sup_linkman,
+      </if>
+      <if test="supPhone != null" >
+        sup_phone,
+      </if>
+      <if test="supAddress != null" >
+        sup_address,
+      </if>
+      <if test="supRemark != null" >
+        sup_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="supId != null" >
+        #{supId,jdbcType=INTEGER},
+      </if>
+      <if test="supName != null" >
+        #{supName,jdbcType=VARCHAR},
+      </if>
+      <if test="supLinkman != null" >
+        #{supLinkman,jdbcType=VARCHAR},
+      </if>
+      <if test="supPhone != null" >
+        #{supPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="supAddress != null" >
+        #{supAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="supRemark != null" >
+        #{supRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="supRemark != null" >
+        sup_pay = #{supPay},
+      </if>
+      <if test="supRemark != null" >
+        sup_type = #{supType},
+      </if>
+    </trim>
+  </insert> 
+  <update id="updateByPrimaryKeySelective" parameterType="Supplier" >
+    update supplier
+    <set >
+      <if test="supName != null" >
+        sup_name = #{supName,jdbcType=VARCHAR},
+      </if>
+      <if test="supLinkman != null" >
+        sup_linkman = #{supLinkman,jdbcType=VARCHAR},
+      </if>
+      <if test="supPhone != null" >
+        sup_phone = #{supPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="supAddress != null" >
+        sup_address = #{supAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="supRemark != null" >
+        sup_remark = #{supRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="supRemark != null" >
+        sup_pay = #{supPay},
+      </if>
+      <if test="supRemark != null" >
+        sup_type = #{supType},
+      </if>
+    </set>
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Supplier" >
+    update supplier
+    set sup_name = #{supName,jdbcType=VARCHAR},
+      sup_linkman = #{supLinkman,jdbcType=VARCHAR},
+      sup_phone = #{supPhone,jdbcType=VARCHAR},
+      sup_address = #{supAddress,jdbcType=VARCHAR},
+      sup_remark = #{supRemark,jdbcType=VARCHAR},
+      sup_pay=#{supPay},
+      sup_type=#{supType}
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 通过主键批量删除 -->
+  <delete id="deleteList">
+       delete from supplier where sup_id in
+       <foreach collection="array" open="(" close=")" separator="," item="pk">
+          #{pk}
+       </foreach>
+  </delete>
+  
+</mapper>
